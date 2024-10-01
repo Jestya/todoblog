@@ -1,29 +1,22 @@
-from fastapi import FastAPI
-from services.services import read_posts, read_users, create_user, create_post
-from serializers import UserSer, PostSer
-
-app = FastAPI(title="blog")
-
-
-@app.get("/users/")
-def root():
-    users = read_users()
-    return users
+import asyncio
+from contextlib import asynccontextmanager
+from fastapi import FastAPI, APIRouter
+from routers import posts, users
+from core.database.session import Base, sessionmanager
+from models import User
 
 
-@app.get("/posts/")
-def get_posts():
-    posts = read_posts()
-    return posts
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    sessionmanager.init_db()
+    # async with sessionmanager.engine.begin() as conn:
+    #     await conn.run_sync(Base.metadata.drop_all)
+    #     await conn.run_sync(Base.metadata.create_all)
+    yield
 
 
-@app.post("/users/")
-def add_user(user: UserSer):
-    users = create_user(user)
-    return users
+app = FastAPI(title="blog", lifespan=lifespan)
 
 
-@app.post("/posts/")
-def add_post(post: PostSer):
-    posts = create_post(post)
-    return posts
+app.include_router(posts.post_router)
+app.include_router(users.user_router)

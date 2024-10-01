@@ -2,16 +2,17 @@ import asyncio
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, APIRouter
 from routers import posts, users
-from core.database.session import Base, sessionmanager
+from core.database.session import sessionmanager
+from core.database.models import Base
 from models import User
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     sessionmanager.init_db()
-    # async with sessionmanager.engine.begin() as conn:
-    #     await conn.run_sync(Base.metadata.drop_all)
-    #     await conn.run_sync(Base.metadata.create_all)
+    async with sessionmanager.engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
+        await conn.run_sync(Base.metadata.create_all)
     yield
 
 

@@ -4,9 +4,9 @@ from pydantic import BaseModel, Field
 
 
 class DefaultModel(BaseModel):
-    id: int = Field(ge=0)
-    created_at: datetime = datetime.now(timezone.utc).isoformat(timespec="seconds")
-    updated_at: datetime | None = None
+    pass
+    # created_at: datetime = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    # updated_at: datetime | None = None
 
 
 class UserSer(DefaultModel):
@@ -15,6 +15,9 @@ class UserSer(DefaultModel):
     name: str = Field(max_length=25)
     surname: str = Field(max_length=25)
     password: str = Field(min_length=6, description="Password must be greater than 5")
+
+    # class Config:
+    #     orm_mode = True
 
 
 class PostSer(DefaultModel):

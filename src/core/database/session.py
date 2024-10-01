@@ -9,8 +9,6 @@ from sqlalchemy.ext.asyncio import (
 from asyncio import current_task
 from config import settings
 
-# from sqlalchemy import text
-
 
 class DatabaseSessionManager:
     def __init__(self):
